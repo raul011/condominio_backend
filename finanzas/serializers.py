@@ -17,7 +17,15 @@ class CuotaSerializer(serializers.ModelSerializer):
         model = Cuota
         fields = '__all__'
 
-
+class CuotaCreateForAllSerializer(serializers.Serializer):
+    titulo = serializers.CharField(max_length=255)
+    descripcion = serializers.CharField(required=False, allow_blank=True)
+    fecha_emision = serializers.DateField()
+    fecha_vencimiento = serializers.DateField()
+    monto = serializers.DecimalField(max_digits=10, decimal_places=2)
+    estado = serializers.ChoiceField(choices=[('pendiente', 'Pendiente'), ('pagada', 'Pagada'), ('vencida', 'Vencida')])
+    tipo_cuota_id = serializers.IntegerField()
+    observacion = serializers.CharField(required=False, allow_blank=True)
 class MultaSerializer(serializers.ModelSerializer):
     residente_nombre = serializers.CharField(source='residente.nombre_completo', read_only=True)
     empleado_nombre = serializers.CharField(source='empleado.nombre_completo', read_only=True)

@@ -1,4 +1,7 @@
 from django.shortcuts import render
+from rest_framework.views import APIView
+from .serializers import NotificationSerializer
+from tokens_dispositivos.services.notification_service import NotificationService
 
 from rest_framework import status
 from rest_framework.decorators import api_view, permission_classes
@@ -70,3 +73,19 @@ def my_tokens(request):
     
     serializer = UserTokensSerializer({'tokens': list(tokens)})
     return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+
+class SendNotificationView(APIView):
+    def post(self, request):
+        serializer = NotificationSerializer(data=request.data)
+        if serializer.is_valid():
+            data = serializer.validated_data
+            result = NotificationService.send_to_user(
+                user_id=data["user_id"],
+                title=data["title"],
+                message=data["message"],
+                notification_type=data["notification_type"]
+            )
+            return Response(result, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

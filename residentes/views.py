@@ -3,6 +3,8 @@ from django.shortcuts import render
 from rest_framework import viewsets
 from .models import Residente, Unidad, Visita, Notificacion
 from .serializers import ResidenteSerializer, UnidadSerializer, VisitaSerializer, NotificacionSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
 
 class ResidenteViewSet(viewsets.ModelViewSet):
     queryset = Residente.objects.all()
@@ -11,6 +13,12 @@ class ResidenteViewSet(viewsets.ModelViewSet):
 class UnidadViewSet(viewsets.ModelViewSet):
     queryset = Unidad.objects.all()
     serializer_class = UnidadSerializer
+
+    @action(detail=False, methods=['get'], url_path='placas')
+    def listar_placas(self, request):
+        # Obtener todas las placas no nulas
+        placas = list(self.queryset.exclude(placa__isnull=True).exclude(placa="").values_list('placa', flat=True))
+        return Response(placas)
 
 class VisitaViewSet(viewsets.ModelViewSet):
     queryset = Visita.objects.all()

@@ -16,5 +16,9 @@ class DeviceTokenSerializer(serializers.ModelSerializer):
 class UserTokensSerializer(serializers.Serializer):
     tokens = serializers.ListField(child=serializers.CharField())
 
-
+class NotificationSerializer(serializers.Serializer):
+    user_id = serializers.IntegerField()
+    title = serializers.CharField(max_length=255)
+    message = serializers.CharField(max_length=500)
+    notification_type = serializers.CharField(max_length=50)
    
