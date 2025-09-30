@@ -43,7 +43,6 @@ urlpatterns = [
     path('api/', include('seguridad.urls')),
     path('api/', include('comunicados.urls')),
     path('api/', include('usuarios.urls')),
-    path('api/', include('gastos.urls')),
     path('api/', include('inventario.urls')),
     path('api/', include('tokens_dispositivos.urls')),
 

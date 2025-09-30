@@ -43,10 +43,13 @@ class Multa(models.Model):
 
 
 class Pago(models.Model):
-    METODOS = (('efectivo', 'Efectivo'), ('transferencia', 'Transferencia'), ('tarjeta', 'Tarjeta'))
+    TIPOS = (('cuota', 'Cuota'),('multa', 'Multa'),('reserva', 'Reserva'),)
+    METODOS = (('efectivo', 'Efectivo'), ('qr', 'QR'), ('tarjeta', 'Tarjeta'))
     ESTADOS = (('completado', 'Completado'), ('pendiente', 'Pendiente'), ('fallido', 'Fallido'))
+    tipo = models.CharField(max_length=20, choices=TIPOS)
     cuota = models.ForeignKey(Cuota, on_delete=models.CASCADE, related_name='pagos', null=True, blank=True)
     multa = models.ForeignKey(Multa, on_delete=models.CASCADE, related_name='pagos', null=True, blank=True)
+    reserva = models.ForeignKey('areas_comunes.Reserva', on_delete=models.CASCADE, related_name='pagos', null=True, blank=True)
     monto_pagado = models.DecimalField(max_digits=10, decimal_places=2)
     fecha_pago = models.DateTimeField(default=timezone.now)
     metodo = models.CharField(max_length=50, choices=METODOS)
@@ -56,5 +59,5 @@ class Pago(models.Model):
     user = models.ForeignKey('usuarios.User', on_delete=models.SET_NULL, null=True, related_name='pagos_registrados')
 
     def __str__(self):
-        concepto = f"Cuota {self.cuota.id}" if self.cuota else f"Multa {self.multa.id}"
-        return f"Pago de {self.monto_pagado} para {concepto}"
+        concepto = self.get_tipo_display()
+        return f"{concepto} - {self.monto_pagado} ({self.fecha_pago.date()})"

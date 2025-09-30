@@ -59,7 +59,6 @@ INSTALLED_APPS = [
     'comunicados',
     'areas_comunes',
     'inventario',
-    'gastos',
     'usuarios',
     'tokens_dispositivos',
 ]
