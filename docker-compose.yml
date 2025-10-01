@@ -1,0 +1,28 @@
+
+services:
+  web:
+    build: .
+    #image: 441257995526.dkr.ecr.us-east-2.amazonaws.com/imageapidjango:latest
+    #command: bash /code/entrypoint.sh
+    volumes:
+      - .:/code
+    env_file:
+      - ./.env
+    ports:
+      - 8000:8000
+    depends_on:
+      - db
+  db:
+    image: postgres:14               
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    environment:
+      #- "POSTGRES_HOST_AUTH_METHOD=trust"
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_NAME}
+    ports:                        
+      - "5432:5432"
+
+volumes:
+  postgres_data:

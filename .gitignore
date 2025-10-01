@@ -1,1 +1,3 @@
 video_processor/
+*.json
+.env
