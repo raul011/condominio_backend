@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from django.db import models
 from django.contrib.auth.models import User
-
+#a
 class DeviceToken(models.Model):
     user = models.ForeignKey('usuarios.User', on_delete=models.CASCADE, related_name='device_tokens') 
     token = models.CharField(max_length=255, unique=True)
