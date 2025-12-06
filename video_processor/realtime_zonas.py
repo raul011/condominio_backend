@@ -9,7 +9,7 @@ from onnxruntime_predict import ONNXRuntimeObjectDetection
 
 MODEL_FILENAME = "model.onnx"
 LABELS_FILENAME = "labels.txt"
-API_URL = "http://localhost:8000/api/fcm/send/"
+API_URL = "http://3.129.13.240:8000/api/fcm/send/"
 
 
 ULTIMOS_ALERTAS = {}
@@ -26,7 +26,7 @@ od_model = ONNXRuntimeObjectDetection(MODEL_FILENAME, labels)
 
 # Lista de cámaras
 CAMERAS = {
-    "CAM1": "http://192.168.0.94:4747/video",
+    "CAM1": "http://192.168.0.45:4747/video",
     "CAM2": "http://192.168.0.166:4747/video"
 }
 
@@ -98,7 +98,7 @@ def crear_comunicado(user_id, titulo, contenido, tipo="Aviso", notificado=True):
             "fecha_publicacion": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
             "notificado": notificado
         }
-        r = requests.post("http://localhost:8000/api/comunicados/", json=payload)
+        r = requests.post("http://3.129.13.240:8000/api/comunicados/", json=payload)
         if r.status_code in (200, 201):
             print("✅ Comunicado creado")
         else:

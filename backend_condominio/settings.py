@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-lc%u4$o=2g+a@wm!ix$7d+28xbuo75=5!tsp397z@lcmm%dl3=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-FIREBASE_CREDENTIALS = BASE_DIR / "condominio-8d508-firebase-adminsdk-fbsvc-02754a1504.json"
+FIREBASE_CREDENTIALS = BASE_DIR / "clave.json"
 FIREBASE_PROJECT_ID = "condominio-8d508"
 
 
