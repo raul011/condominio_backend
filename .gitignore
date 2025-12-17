@@ -1,3 +1,7 @@
 video_processor/
 *.json
 .env
+venv
+/venv
+pycache/
+__pycache__/

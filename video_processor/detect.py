@@ -6,7 +6,7 @@ import os
 
 MODEL_FILENAME = "model.onnx"
 LABELS_FILENAME = "labels.txt"
-IMAGE_FILENAME = "test.jpeg"
+IMAGE_FILENAME = "test2.jpg"
 
 class ONNXObjectDetection(ObjectDetection):
     def __init__(self, labels, prob_threshold=0.3, max_detections=20):
