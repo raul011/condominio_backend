@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework',
     'drf_yasg',
+    'django_filters',
     # apps locales
     'residentes',
     'empleados',    
@@ -61,6 +62,7 @@ INSTALLED_APPS = [
     'inventario',
     'usuarios',
     'tokens_dispositivos',
+    'tareas',
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True  # Para desarrollo, luego puedes usar CORS_ALLOWED_ORIGINS
