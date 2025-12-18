@@ -43,18 +43,22 @@ class RegistroAccesoSerializer(serializers.ModelSerializer):
             'registrado_por', 'registrado_por_username', 'foto_url',
             'residente_nombre', 'residente_ci', 'empleado_nombre', 'empleado_ci'
         ]
+        extra_kwargs = {
+            'nombre_completo': {'required': False},
+            'ci': {'required': False},
+        }
     
     def get_residente_nombre(self, obj):
-        return obj.nombre_completo if obj.tipo_persona == 'Residente' else None
+        return obj.residente.nombre_completo if obj.residente else None
 
     def get_residente_ci(self, obj):
-        return obj.ci if obj.tipo_persona == 'Residente' else None
+        return obj.residente.ci if obj.residente else None
     
     def get_empleado_nombre(self, obj):
-        return obj.nombre_completo if obj.tipo_persona == 'Empleado' else None
+        return obj.empleado.nombre_completo if obj.empleado else None
 
     def get_empleado_ci(self, obj):
-        return obj.ci if obj.tipo_persona == 'Empleado' else None
+        return obj.empleado.ci if obj.empleado else None
 
     def validate(self, data):
         tipo_persona = data.get('tipo_persona')
@@ -70,11 +74,11 @@ class RegistroAccesoSerializer(serializers.ModelSerializer):
                 residente = Residente.objects.get(id=residente_id)
                 data['nombre_completo'] = residente.nombre_completo
                 data['ci'] = residente.ci
+                data['residente'] = residente
             except Residente.DoesNotExist:
                 raise serializers.ValidationError({"residente_id": "El residente seleccionado no existe."})
             
-            if empleado_id:
-                raise serializers.ValidationError({"empleado_id": "No se puede asignar un empleado si el tipo de persona es Residente."})
+            data['empleado'] = None
         
         elif tipo_persona == 'Empleado':
             if not empleado_id:
@@ -83,18 +87,46 @@ class RegistroAccesoSerializer(serializers.ModelSerializer):
                 empleado = Empleado.objects.get(id=empleado_id)
                 data['nombre_completo'] = empleado.nombre_completo
                 data['ci'] = empleado.ci
+                data['empleado'] = empleado
             except Empleado.DoesNotExist:
                 raise serializers.ValidationError({"empleado_id": "El empleado seleccionado no existe."})
             
-            if residente_id:
-                raise serializers.ValidationError({"residente_id": "No se puede asignar un residente si el tipo de persona es Empleado."})
+            data['residente'] = None
 
         else: # Visitante, Proveedor, Otro
             if residente_id or empleado_id:
                 raise serializers.ValidationError({"residente_id": "No se puede asignar un residente o empleado para este tipo de persona."})
             if not nombre_completo:
                 raise serializers.ValidationError({"nombre_completo": "El nombre completo es obligatorio para visitantes/proveedores."})
-            # CI is optional for these types, so no validation needed if not provided
+            
+            data['residente'] = None
+            data['empleado'] = None
+
+        # --- NEW VALIDATION: Check for consecutive entries/exits ---
+        # This validation is performed only when creating a new record.
+        # `self.instance` is None during creation.
+        if self.instance is None:
+            tipo_acceso_nuevo = data.get('tipo_acceso')
+            ci_persona = data.get('ci')
+
+            if ci_persona:
+                ultimo_registro = RegistroAcceso.objects.filter(ci=ci_persona).order_by('-fecha_hora').first()
+
+                if ultimo_registro:
+                    if ultimo_registro.tipo_acceso == 'Entrada' and tipo_acceso_nuevo == 'Entrada':
+                        raise serializers.ValidationError(
+                            f"'{data.get('nombre_completo')}' ya tiene una entrada registrada. Debe registrar una salida."
+                        )
+                    if ultimo_registro.tipo_acceso == 'Salida' and tipo_acceso_nuevo == 'Salida':
+                        raise serializers.ValidationError(
+                            f"'{data.get('nombre_completo')}' ya tiene una salida registrada. Debe registrar una entrada."
+                        )
+                
+                elif tipo_acceso_nuevo == 'Salida':
+                    raise serializers.ValidationError(
+                        f"No se puede registrar una salida para '{data.get('nombre_completo')}' sin una entrada previa."
+                    )
+        # --- END OF NEW VALIDATION ---
             
         return data
 
