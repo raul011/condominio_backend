@@ -52,6 +52,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'drf_yasg',
     'django_filters',
+    
+    # Cloudinary storage
+    'cloudinary',
+    'cloudinary_storage',
+
     # apps locales
     'residentes',
     'empleados',    
@@ -63,7 +68,14 @@ INSTALLED_APPS = [
     'usuarios',
     'tokens_dispositivos',
     'tareas',
+    'registros_accesos',
 ]
+
+# Cloudinary Configuration
+# The django-cloudinary-storage library automatically parses the CLOUDINARY_URL
+CLOUDINARY_URL = config('CLOUDINARY_URL', default='')
+MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
 
 CORS_ALLOW_ALL_ORIGINS = True  # Para desarrollo, luego puedes usar CORS_ALLOWED_ORIGINS
 
