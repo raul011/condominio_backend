@@ -6,6 +6,9 @@ import sys
 
 def main():
     """Run administrative tasks."""
+    import sys
+    print(f"DEBUG: sys.executable = {sys.executable}")
+    print(f"DEBUG: sys.path = {sys.path}")
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend_condominio.settings')
     try:
         from django.core.management import execute_from_command_line
